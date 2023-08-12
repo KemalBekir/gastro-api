@@ -4,7 +4,7 @@ const {
   Types: { ObjectId },
 } = require("mongoose");
 
-const postSchema = new mongoose.Schema({
+const postSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -20,6 +20,6 @@ const postSchema = new mongoose.Schema({
   likes: [{ type: ObjectId, ref: "User" }],
 });
 
-const Post = mongoose.model("Post", postSchema);
+const Post = model("Post", postSchema);
 
 module.exports = Post;

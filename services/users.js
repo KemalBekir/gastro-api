@@ -19,6 +19,43 @@ async function register(username, email, password) {
   return createSession(user);
 }
 
+async function login(email, password) {
+  const user = await User.findOne({ email: new RegExp(`^${email}$`, "i") });
+
+  if (!user) {
+    throw new Error("Incorrect email or password");
+  }
+
+  const match = await bcrypt.compare(password, user.hashedPassword);
+
+  if (!match) {
+    throw new Error("Incorrect email or password");
+  }
+
+  return createSession(user);
+}
+
+function logout(token) {
+  blacklist.push(token);
+}
+
+async function getProfile(id) {
+  const user = User.findOne({ _id: id }, { hashedPassword: 0, __v: 0 });
+
+  if (!user) {
+    throw new Error("User does not exist");
+  }
+
+  return user;
+}
+
+async function updateProfileInfo(id, user) {
+  const existing = await User.findById(id);
+
+  existing.username = user.username;
+  existing.email = user.email;
+}
+
 function createSession(user) {
   return {
     email: user.email,
@@ -45,7 +82,11 @@ function verifySession(token) {
   };
 }
 
-
 module.exports = {
-    register,
-}
+  login,
+  register,
+  logout,
+  verifySession,
+  getProfile,
+  updateProfileInfo,
+};

@@ -31,7 +31,7 @@ const userSchema = new Schema(
       },
     },
     hashedPassword: { type: String, required: true },
-    mySearches: [{ type: ObjectId, ref: "Searches" }],
+    myPosts: [{ type: ObjectId, ref: "Post" }],
   },
   { timestamp: true }
 );
