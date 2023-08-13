@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 
 const cors = require("./middleware/cors");
 const userController = require("./controllers/users");
+const postController = require("./controllers/post");
 const auth = require("./middleware/auth");
 dotenv.config({ path: __dirname + "/.env" });
 

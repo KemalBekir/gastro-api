@@ -1,5 +1,6 @@
 const { isGuest, isAuth } = require("../middleware/guards");
 const { register } = require("../services/users");
+const sendErrorResponse = require("../utils/errorHandler");
 const mapErrors = require("../utils/mappers");
 
 const router = require("express").Router();
@@ -16,7 +17,9 @@ router.post("/register", isGuest(), async (req, res) => {
       req.body.password.trim()
     );
     res.status(201).json(result);
-  } catch (err) {}
+  } catch (err) {
+    sendErrorResponse(res, err);
+  }
 });
 
 router.get("/profile", isAuth(), async (req, res) => {
@@ -24,9 +27,7 @@ router.get("/profile", isAuth(), async (req, res) => {
     const result = await getProfile(req.user); //TODO - create getProfile
     res.status(200).json(result);
   } catch (err) {
-    console.error(err);
-    const error = mapErrors(err);
-    res.status(400).json({ message: error });
+    sendErrorResponse(res, err);
   }
 });
 
@@ -39,9 +40,7 @@ router.post("/login", isGuest(), async (req, res) => {
     );
     res.json(result);
   } catch (err) {
-    console.error(err);
-    const error = mapErrors(err);
-    res.status(400).json({ message: error });
+    sendErrorResponse(res, err);
   }
 });
 
