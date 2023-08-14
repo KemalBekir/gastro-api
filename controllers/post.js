@@ -3,6 +3,7 @@ const mapErrors = require("../utils/mappers");
 const { isAuth, isOwner, isAdmin } = require("../middleware/guards");
 const preload = require("../middleware/preload");
 const api = require("../services/post");
+const sendErrorResponse = require("../utils/errorHandler");
 
 router.get("/", async (req, res) => {
   const data = await api.getAll();
@@ -19,7 +20,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
-router.post("/", isAuth(), isAdmin(), async (req, res) => {
+router.post("/", isAuth(), async (req, res) => {
   const post = {
     title: req.body.title,
     image: req.body.image,

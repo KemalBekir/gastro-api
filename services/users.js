@@ -60,11 +60,14 @@ function createSession(user) {
   return {
     email: user.email,
     _id: user._id,
-    accessToken: jwt.sign({
-      email: user.email,
-      _id: user._id,
-      role: user.role,
-    }),
+    accessToken: jwt.sign(
+      {
+        email: user.email,
+        _id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET
+    ),
   };
 }
 
@@ -72,7 +75,6 @@ function verifySession(token) {
   if (blacklist.includes(token)) {
     throw new Error("Toke is invalidated");
   }
-
   const payload = jwt.verify(token, process.env.JWT_SECRET);
   return {
     email: payload.email,

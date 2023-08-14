@@ -17,6 +17,7 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
+  comments: [{ type: ObjectId, ref: "Comment" }],
   owner: { type: ObjectId, ref: "User" },
   likes: [{ type: ObjectId, ref: "User" }],
 });

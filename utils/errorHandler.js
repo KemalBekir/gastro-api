@@ -1,3 +1,5 @@
+const mapErrors = require("./mappers");
+
 function sendErrorResponse(res, err) {
   const error = mapErrors(err);
   console.error(err.message);

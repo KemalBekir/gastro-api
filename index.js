@@ -41,6 +41,7 @@ async function start() {
   app.use(cors());
   app.use(auth());
   app.use("/users", userController);
+  app.use("/posts", postController);
 
   app.get("/", (req, res) => {
     res.json({ message: "Gastro REST service operational" });

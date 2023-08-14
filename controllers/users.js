@@ -1,7 +1,6 @@
 const { isGuest, isAuth } = require("../middleware/guards");
-const { register } = require("../services/users");
+const { register, login } = require("../services/users");
 const sendErrorResponse = require("../utils/errorHandler");
-const mapErrors = require("../utils/mappers");
 
 const router = require("express").Router();
 
@@ -33,10 +32,9 @@ router.get("/profile", isAuth(), async (req, res) => {
 
 router.post("/login", isGuest(), async (req, res) => {
   try {
-    //TODO - create Login fn
     const result = await login(
       req.body.email.trim().toLowerCase(),
-      req.body.trim()
+      req.body.password.trim()
     );
     res.json(result);
   } catch (err) {

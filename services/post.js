@@ -10,10 +10,18 @@ async function getAllPostByOwner(owner) {
 }
 
 async function getById(id) {
-  return Post.findById(id).populate({
-    path: "owner",
-    select: ["email", "username"],
-  });
+  return Post.findById(id)
+    .populate({
+      path: "owner",
+      select: ["email", "username"],
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        model: "User", 
+      },
+    });
 }
 
 async function create(post) {
@@ -21,8 +29,9 @@ async function create(post) {
   await result.save();
 
   const user = await User.findById(result.owner);
-  user.myPosts.push(result._id);
-  await user.save();
+  console.log(user);
+//   user.myPosts.push(result._id);
+//   await user.save();
 
   return result;
 }
