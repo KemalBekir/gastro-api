@@ -2,7 +2,13 @@ const Post = require("../models/post");
 const User = require("../models/user");
 
 async function getAll() {
-  return Post.find({});
+  return Post.find({}).populate({
+    path: "comments",
+    populate: {
+      path: "author",
+      select: "_id username createdAt", // Limit the fields to be populated
+    },
+  });
 }
 
 async function getAllPostByOwner(owner) {
@@ -19,7 +25,7 @@ async function getById(id) {
       path: "comments",
       populate: {
         path: "author",
-        model: "User", 
+        model: "User",
       },
     });
 }
@@ -30,8 +36,8 @@ async function create(post) {
 
   const user = await User.findById(result.owner);
   console.log(user);
-//   user.myPosts.push(result._id);
-//   await user.save();
+  //   user.myPosts.push(result._id);
+  //   await user.save();
 
   return result;
 }

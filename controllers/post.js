@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const mapErrors = require("../utils/mappers");
 const { isAuth, isOwner, isAdmin } = require("../middleware/guards");
 const preload = require("../middleware/preload");
+const Comment = require("../models/comment");
 const api = require("../services/post");
 const sendErrorResponse = require("../utils/errorHandler");
 
@@ -55,6 +55,25 @@ router.put("/:id", preload(), isOwner(), async (req, res) => {
   try {
     const result = await api.updatePost(id, post);
     res.json(result);
+  } catch (err) {
+    sendErrorResponse(res, err);
+  }
+});
+
+router.post("/:id/comments", isAuth(), async (req, res) => {
+  try {
+    const { postId, text, author } = req.body;
+
+    const comment = new Comment({
+      text,
+      author,
+    });
+
+    await comment.save();
+
+    const post = await api.getById(postId);
+    post.comments.push(comment._id);
+    await post.save();
   } catch (err) {
     sendErrorResponse(res, err);
   }
