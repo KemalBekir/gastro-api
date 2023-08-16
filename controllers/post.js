@@ -67,6 +67,7 @@ router.post("/:id/comments", isAuth(), async (req, res) => {
     const comment = new Comment({
       text,
       author,
+      post: postId,
     });
 
     await comment.save();
@@ -74,6 +75,7 @@ router.post("/:id/comments", isAuth(), async (req, res) => {
     const post = await api.getById(postId);
     post.comments.push(comment._id);
     await post.save();
+    res.json(post);
   } catch (err) {
     sendErrorResponse(res, err);
   }
