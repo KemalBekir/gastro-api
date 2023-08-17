@@ -10,7 +10,7 @@ const commentSchema = new Schema(
       type: String,
       required: true,
     },
-    post: {
+    postId: {
       type: ObjectId,
       ref: "Post", // Reference to the Post model
     },

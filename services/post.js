@@ -6,7 +6,7 @@ async function getAll() {
     path: "comments",
     populate: {
       path: "author",
-      select: "_id username createdAt", // Limit the fields to be populated
+      select: ["_id", "username", "createdAt"], // Limit the fields to be populated
     },
   });
 }
@@ -35,9 +35,8 @@ async function create(post) {
   await result.save();
 
   const user = await User.findById(result.owner);
-  console.log(user);
-  //   user.myPosts.push(result._id);
-  //   await user.save();
+  user.myPosts.push(result._id);
+  await user.save();
 
   return result;
 }

@@ -67,7 +67,7 @@ router.post("/:id/comments", isAuth(), async (req, res) => {
     const comment = new Comment({
       text,
       author,
-      post: postId,
+      postId: postId,
     });
 
     await comment.save();
