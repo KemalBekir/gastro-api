@@ -6,7 +6,7 @@ async function getAll() {
     path: "comments",
     populate: {
       path: "author",
-      select: ["_id", "username", "createdAt"], // Limit the fields to be populated
+      select: "_id username createdAt -hashedPassword -email -myPosts" // Limit the fields to be populated
     },
   });
 }
@@ -16,19 +16,22 @@ async function getAllPostByOwner(owner) {
 }
 
 async function getById(id) {
-  return Post.findById(id)
-    .populate({
-      path: "owner",
-      select: ["email", "username"],
-    })
-    .populate({
-      path: "comments",
-      populate: {
-        path: "author",
+    return Post.findById(id)
+      .populate({
+        path: "owner",
+        select: "_id username createdAt",
         model: "User",
-      },
-    });
-}
+      })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "_id username createdAt",
+          model: "User",
+        },
+      });
+  }
+  
 
 async function create(post) {
   const result = new Post(post);

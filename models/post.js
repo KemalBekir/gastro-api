@@ -9,10 +9,11 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
+  heroImage: {
+    type: String, // Reference to the Image model
     required: true,
   },
+  images: [{ type: ObjectId, ref: "Image" }],
   description: {
     type: String,
     required: true,
