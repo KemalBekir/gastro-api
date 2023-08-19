@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const cors = require("./middleware/cors");
 const userController = require("./controllers/users");
 const postController = require("./controllers/post");
+const commentController = require("./controllers/comment");
 const auth = require("./middleware/auth");
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -42,6 +43,7 @@ async function start() {
   app.use(auth());
   app.use("/users", userController);
   app.use("/posts", postController);
+  app.use("/comments", commentController);
 
   app.get("/", (req, res) => {
     res.json({ message: "Gastro REST service operational" });

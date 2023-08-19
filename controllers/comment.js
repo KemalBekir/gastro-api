@@ -29,3 +29,5 @@ router.put("/:id", preload(), isOwner(), async (req, res) => {
     sendErrorResponse(res, err);
   }
 });
+
+module.exports = router;

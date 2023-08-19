@@ -2,36 +2,39 @@ const Post = require("../models/post");
 const User = require("../models/user");
 
 async function getAll() {
-  return Post.find({}).populate({
-    path: "comments",
-    populate: {
-      path: "author",
-      select: "_id username createdAt -hashedPassword -email -myPosts" // Limit the fields to be populated
-    },
-  });
-}
+    return Post.find({}).populate({
+      path: "images", // Assuming "images" is the field that references the Image model
+      select: "url altText", // Select the fields you want to populate
+    }).populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        select: "_id username createdAt", // Limit the fields to be populated
+      },
+    });
+  }
+  
 
 async function getAllPostByOwner(owner) {
   return Post.find({ owner }).sort("");
 }
 
 async function getById(id) {
-    return Post.findById(id)
-      .populate({
-        path: "owner",
+  return Post.findById(id)
+    .populate({
+      path: "owner",
+      select: "_id username createdAt",
+      model: "User",
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "author",
         select: "_id username createdAt",
         model: "User",
-      })
-      .populate({
-        path: "comments",
-        populate: {
-          path: "author",
-          select: "_id username createdAt",
-          model: "User",
-        },
-      });
-  }
-  
+      },
+    });
+}
 
 async function create(post) {
   const result = new Post(post);

@@ -57,23 +57,26 @@ async function updateProfileInfo(id, user) {
 }
 
 function createSession(user) {
+  const accessToken = jwt.sign(
+    {
+      email: user.email,
+      _id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+
   return {
     email: user.email,
     _id: user._id,
-    accessToken: jwt.sign(
-      {
-        email: user.email,
-        _id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET
-    ),
+    accessToken: accessToken,
   };
 }
 
 function verifySession(token) {
   if (blacklist.includes(token)) {
-    throw new Error("Toke is invalidated");
+    throw new Error("Token is invalidated");
   }
   const payload = jwt.verify(token, process.env.JWT_SECRET);
   return {
