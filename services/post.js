@@ -2,18 +2,19 @@ const Post = require("../models/post");
 const User = require("../models/user");
 
 async function getAll() {
-    return Post.find({}).populate({
+  return Post.find({})
+    .populate({
       path: "images", // Assuming "images" is the field that references the Image model
       select: "url altText", // Select the fields you want to populate
-    }).populate({
+    })
+    .populate({
       path: "comments",
       populate: {
         path: "author",
         select: "_id username createdAt", // Limit the fields to be populated
       },
     });
-  }
-  
+}
 
 async function getAllPostByOwner(owner) {
   return Post.find({ owner }).sort("");
@@ -74,12 +75,18 @@ async function searchFunction(text) {
 }
 
 async function postIsLiked(postId, userId) {
-  const post = await Post.find(postId);
+  const post = await Post.findById(postId);
 
   if (post.likes.includes(userId)) {
-    post.filter((x) => x._id !== userId);
+    // User has already liked the post, remove their like
+    post.likes = post.likes.filter(
+      (likedUserId) => likedUserId.toString() !== userId
+    );
+  } else {
+    // User hasn't liked the post, add their like
+    post.likes.push(userId);
   }
-  post.likes.push(userId);
+
   await post.save();
 }
 

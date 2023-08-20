@@ -97,6 +97,19 @@ router.post("/:id/comments", isAuth(), async (req, res) => {
   }
 });
 
+router.post("/:id/like", isAuth(), async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id; // Assuming you have user data in req.user
+
+  try {
+    await api.postIsLiked(postId, userId);
+    res.json({ message: "Post liked successfully" });
+  } catch (error) {
+    console.error("Error liking post:", error);
+    res.status(500).json({ message: "Failed to like post" });
+  }
+});
+
 router.delete("/:id", preload(), isOwner(), async (req, res) => {
   try {
     const postId = req.params.id;
