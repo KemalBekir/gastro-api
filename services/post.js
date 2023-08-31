@@ -11,8 +11,12 @@ async function getAll() {
       path: "comments",
       populate: {
         path: "author",
-        select: "_id username createdAt", // Limit the fields to be populated
+        select: "_id username text createdAt", // Limit the fields to be populated
       },
+    })
+    .populate({
+      path: "owner",
+      select: "username",
     });
 }
 
@@ -31,9 +35,13 @@ async function getById(id) {
       path: "comments",
       populate: {
         path: "author",
-        select: "_id username createdAt",
+        select: "_id username text createdAt",
         model: "User",
       },
+    })
+    .populate({
+      path: "images", // Assuming "images" is the field that references the Image model
+      select: "url altText", // Select the fields you want to populate
     });
 }
 
