@@ -1,13 +1,19 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+
 const blacklist = [];
 
-async function register(username, email, password) {
+
+
+async function register(req, res) {
+  const { username, email, password } = req.body;
+
   const existing = await User.findOne({ email: new RegExp(`^${email}$`, "i") });
   if (existing) {
-    throw new Error("Email already exist");
+    return res.status(400).json({ message: "Email already exists" });
   }
+
   const user = new User({
     username,
     email,
@@ -16,47 +22,47 @@ async function register(username, email, password) {
 
   await user.save();
 
-  return createSession(user);
+  const sessionData = createSessionData(user);
+  setSessionCookie(res, sessionData);
+
+  res.status(201).json({ message: "Registration successful", sessionData });
 }
 
-async function login(email, password) {
+async function login(req, res) {
+  const { email, password } = req.body;
+
   const user = await User.findOne({ email: new RegExp(`^${email}$`, "i") });
 
   if (!user) {
-    throw new Error("Incorrect email or password");
+    return res.status(401).json({ message: "Incorrect email or password" });
   }
 
   const match = await bcrypt.compare(password, user.hashedPassword);
 
   if (!match) {
-    throw new Error("Incorrect email or password");
+    return res.status(401).json({ message: "Incorrect email or password" });
   }
 
-  return createSession(user);
+  const sessionData = createSessionData(user);
+  setSessionCookie(res, sessionData);
+
+  res.status(200).json({ message: "Login successful", sessionData });
 }
 
-function logout(token) {
-  blacklist.push(token);
-}
+function logout(req, res) {
+  // Clear the session cookie
+  res.clearCookie("session");
 
-async function getProfile(id) {
-  const user = User.findOne({ _id: id }, { hashedPassword: 0, __v: 0 });
-
-  if (!user) {
-    throw new Error("User does not exist");
+  // Optionally add the session token to the blacklist
+  const token = req.cookies.session;
+  if (token) {
+    blacklist.push(token);
   }
 
-  return user;
+  res.status(204).json({ message: "Logout successful" });
 }
 
-async function updateProfileInfo(id, user) {
-  const existing = await User.findById(id);
-
-  existing.username = user.username;
-  existing.email = user.email;
-}
-
-function createSession(user) {
+function createSessionData(user) {
   const accessToken = jwt.sign(
     {
       email: user.email,
@@ -72,6 +78,13 @@ function createSession(user) {
     _id: user._id,
     accessToken: accessToken,
   };
+}
+
+function setSessionCookie(res, sessionData) {
+  res.cookie("session", sessionData.accessToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + process.env.JWT_EXPIRES_IN * 1000), // Set expiration time
+  });
 }
 
 function verifySession(token) {
@@ -92,6 +105,4 @@ module.exports = {
   register,
   logout,
   verifySession,
-  getProfile,
-  updateProfileInfo,
 };

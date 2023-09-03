@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 const cors = require("./middleware/cors");
+const cookieParser = require("cookie-parser");
 const userController = require("./controllers/users");
 const postController = require("./controllers/post");
 const commentController = require("./controllers/comment");
@@ -41,6 +42,8 @@ async function start() {
   app.use(express.json());
   app.use(cors());
   app.use(auth());
+  app.use(cookieParser());
+  app.use;
   app.use("/users", userController);
   app.use("/posts", postController);
   app.use("/comments", commentController);
