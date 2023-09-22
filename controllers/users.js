@@ -9,13 +9,7 @@ router.post("/register", isGuest(), async (req, res) => {
     if (req.body.password.trim() == "" || req.body.email.trim() == "") {
       throw new Error("Email and password are required");
     }
-
-    const result = await register(
-      req.body.username,
-      req.body.email.trim().toLowerCase(),
-      req.body.password.trim()
-    );
-    res.status(201).json(result);
+    await register(req, res); // Pass 'req' and 'res' as arguments
   } catch (err) {
     sendErrorResponse(res, err);
   }
