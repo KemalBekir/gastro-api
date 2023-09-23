@@ -26,10 +26,7 @@ router.get("/profile", isAuth(), async (req, res) => {
 
 router.post("/login", isGuest(), async (req, res) => {
   try {
-    const result = await login(
-      req.body.email.trim().toLowerCase(),
-      req.body.password.trim()
-    );
+    const result = await login(req, res);
     res.json(result);
   } catch (err) {
     sendErrorResponse(res, err);

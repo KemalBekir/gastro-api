@@ -94,7 +94,6 @@ function createSessionData(user) {
 function setSessionCookie(res, sessionData) {
   res.cookie("session", sessionData.accessToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + process.env.JWT_EXPIRES_IN * 1000), // Set expiration time
   });
 }
 
