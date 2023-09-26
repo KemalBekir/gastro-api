@@ -1,15 +1,15 @@
 const { verifySession } = require("../services/users");
 
 module.exports = () => (req, res, next) => {
-  const token = req.headers["x-authorization"];
+  const sessionCookie = req.cookies.session;
 
   try {
-    if (token) {
-      const userData = verifySession(token);
+    if (sessionCookie) {
+      const userData = verifySession(sessionCookie);
       req.user = userData;
     }
     next();
   } catch (err) {
-    res.status(498).json({ message: "Invalid access token, Plese login" });
+    res.status(498).json({ message: "Invalid access token, Please login" });
   }
 };
